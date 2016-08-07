@@ -11,13 +11,13 @@ Behaviour.specify("A.help-button", 'hudson-behavior', 1, function(e) {
                 $(customtr).addClassName("help-area");
                 $(customtr).addClassName("custom-help");
                 $(thistr).insert({after:customtr});
-                //tr = findFollowingTR(customtr, "help-area");
                 $(customtr).down().next().down().down().down().next().style.display = "block";
                 var div = $(tr).down().next().down();
                 var div2 = $(customtr).down().next().down().down().next()
                 var div3 = $(customtr).down().next().down();
                 div.style.display = "block";
                 div3.style.display = "block";
+
                 // make it visible
                 new Ajax.Request(this.getAttribute("helpURL"), {
                     method : 'get',
@@ -32,19 +32,15 @@ Behaviour.specify("A.help-button", 'hudson-behavior', 1, function(e) {
                     }
                 });
                 
-
                 var customHelpUrl = this.getAttribute("helpURL").replace(rootURL+"/", "").replace("/", ".");
                 while(customHelpUrl.indexOf("/") + 1){
                     customHelpUrl = customHelpUrl.replace("/", ".")
                 }
-                //alert(customHelpUrl)
 
                 var customurl = rootURL + "/helpmanager/get?class="+customHelpUrl;
                     $(div2).setAttribute("customHelpUrl", rootURL+"/helpmanager/update");
                     $(div2).setAttribute("className", customHelpUrl);
 
-
-                //alert(customurl)
                 new Ajax.Request(customurl, {
                     method : 'get',
                     onSuccess : function(x) {
@@ -57,46 +53,48 @@ Behaviour.specify("A.help-button", 'hudson-behavior', 1, function(e) {
                         layoutUpdateCallback.call();
                     }
                 });
-            } else {
-                var div = $(findFollowingTR(tr, "help-area")).down().next().down();
-                div.style.display = "none";
-                $(tr).remove();
-                layoutUpdateCallback.call();
-            }
+
+                } else {
+                    var div = $(findFollowingTR(tr, "help-area")).down().next().down();
+                    div.style.display = "none";
+                    $(tr).remove();
+                    layoutUpdateCallback.call();
+                }
 
             return false;
         };
-        e.tabIndex = 9999; // make help link unnavigable from keyboard
-        e = null; // avoid memory leak
+
+        e.tabIndex = 9999; 
+        e = null;
+        
     });
-function save_custom_help(myel) {
-            $(myel).style.display = "none";
-            $(myel).next().style.display = "block";
-            var div = $(myel).up().next();
-            div.innerHTML = div.down().value;
-            
-            var xmlhttp;
-            if (window.XMLHttpRequest)
-            {// код для IE7+, Firefox, Chrome, Opera, Safari
-                xmlhttp=new XMLHttpRequest();
-            }
-            else
-            {// код для IE6, IE5
-                xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-            }
 
-            xmlhttp.open("POST",$(div).getAttribute("customHelpUrl"),true);
-            xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-            xmlhttp.send("class="+$(div).getAttribute("className")+"&textArea="+div.innerHTML);
+    function save_custom_help(myel) {
+        $(myel).style.display = "none";
+        $(myel).next().style.display = "block";
+        var div = $(myel).up().next();
+        div.innerHTML = div.down().value;
 
+        var xmlhttp;
+        if (window.XMLHttpRequest) {
+            xmlhttp = new XMLHttpRequest();
+        }
+        else {
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
 
-            return false;
-};
+        xmlhttp.open("POST",$(div).getAttribute("customHelpUrl"),true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        xmlhttp.send("class="+$(div).getAttribute("className")+"&textArea="+div.innerHTML);
+
+        return false;
+    };
+
 function edit_custom_help(myel) {
     $(myel).style.display = "none";
-            $(myel).previous().style.display = "block";
-            var div = $(myel).up().next();
-            div.innerHTML = "<textarea name='textArea'>"+div.innerHTML+"</textarea>";
-            div.down().focus();
-            return false;
+        $(myel).previous().style.display = "block";
+        var div = $(myel).up().next();
+        div.innerHTML = "<textarea name='textArea'>"+div.innerHTML+"</textarea>";
+        div.down().focus();
+        return false;
 };

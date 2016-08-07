@@ -7,9 +7,9 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
 
 @Extension
-public class pagedec extends PageDecorator {
-    public pagedec() {
-        super(pagedec.class);
+public class EditHelpPageDecorator extends PageDecorator {
+    public EditHelpPageDecorator() {
+        super(EditHelpPageDecorator.class);
         load();
     }
 }

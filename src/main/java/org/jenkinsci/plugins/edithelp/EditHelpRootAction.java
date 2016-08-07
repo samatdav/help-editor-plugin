@@ -20,37 +20,12 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 
+
 @Extension
-public class MyHelloRootAct implements RootAction {
-    public transient final Class<?> clazz = (Class)getClass();
-    Map<String, String> map = new TreeMap<String, String>();
+public class EditHelpRootAction implements RootAction {
+
+    //reading the catalog of helpmanager
     private static ArrayList<File> listWithFileNames = new ArrayList<>();
-    public MyHelloRootAct() throws IOException {
-        String dirName = Jenkins.getInstance().getRootDir().toString()+"/helpmanager";
-        File f2 = new File(dirName);
-        if(!f2.exists())
-            f2.mkdirs();
-        getListFiles(dirName);
-
-        for (File fil : listWithFileNames) {
-            StringBuilder sb = new StringBuilder();
-            BufferedReader in = new BufferedReader(new FileReader(dirName+"/"+fil.getName()));
-            try {
-                String s;
-                while ((s = in.readLine()) != null) {
-                    sb.append(s);
-                    sb.append("\n");
-                }
-            } finally {
-                in.close();
-            }
-
-            map.put(fil.getName(),sb.toString());
-        }
-
-    }
-
-
     public static void getListFiles(String str) {
         File f = new File(str);
         for (File s : f.listFiles()) {
@@ -60,8 +35,40 @@ public class MyHelloRootAct implements RootAction {
                 getListFiles(s.getAbsolutePath());
             }
         }
-
     }
+
+    //array for cash storage
+    Map<String, String> map = new TreeMap<String, String>();
+
+    //reading files into cash
+    public EditHelpRootAction() throws IOException {
+        String dirName = Jenkins.getInstance().getRootDir().toString()+"/helpmanager";
+
+        //check if the directory exists
+        File helpManagerFile = new File(dirName);
+        if(!helpManagerFile.exists())
+            helpManagerFile.mkdirs();
+
+        //reading files from the directory
+        getListFiles(dirName);
+
+        //stream reading from files
+        for (File fil : listWithFileNames) {
+            StringBuilder sb = new StringBuilder();
+            BufferedReader br = new BufferedReader(new FileReader(dirName+"/"+fil.getName()));
+            try {
+                String s;
+                while ((s = br.readLine()) != null) {
+                    sb.append(s);
+                    sb.append("\n");
+                }
+            } finally {
+                br.close();
+            }
+            map.put(fil.getName(),sb.toString());
+        }
+    }
+
     @Override
     public String getIconFileName() {
         return null;
@@ -77,12 +84,11 @@ public class MyHelloRootAct implements RootAction {
         return "helpmanager";
     }
 
-    public String getMyString() throws IOException {
-
+    //copying from array
+    public String getMyString() {
         //process get request
         String class_name = Stapler.getCurrentRequest().getParameter("class");
 
-        ;
         if(map.containsKey(class_name+".html")){
             return map.get(class_name+".html");
         }else{
@@ -90,34 +96,39 @@ public class MyHelloRootAct implements RootAction {
         }
     }
 
+    //save text area into file and array
     public String getUpdateMyString() throws IOException {
-
         //process get request
         String class_name = Stapler.getCurrentRequest().getParameter("class");
         String updated_class_name = Stapler.getCurrentRequest().getParameter("textArea");
+
+        //replacement or creation of the string
         map.put(class_name+".html",updated_class_name);
+
+        //writing into a file
         if (class_name != null) {
 
             String dirName = Jenkins.getInstance().getRootDir().toString()+"/helpmanager";
-            File f2 = new File(dirName);
-            if(!f2.exists())
-                f2.mkdirs();
+            
+            //check if the directory exists
+            File helpManagerFile = new File(dirName);
+            if(!helpManagerFile.exists())
+                helpManagerFile.mkdirs();
 
             File newFile = new File(dirName + "/" + class_name + ".html");
             //check if the file exists
             if (!newFile.exists()) {
                 newFile.createNewFile();
             }
+
+            //stream writing into file
             FileWriter fw = new FileWriter(newFile);
             BufferedWriter out = new BufferedWriter(fw);
             out.write(updated_class_name);
             out.flush();
             out.close();
-
         }
 
-
         return null;
-        //return (class_name+updated_class_name);
     }
 }
