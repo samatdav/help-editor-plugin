@@ -28,7 +28,10 @@ public class EditHelpRootAction implements RootAction {
     private static ArrayList<File> listWithFileNames = new ArrayList<>();
     public static void getListFiles(String str) {
         File f = new File(str);
-        for (File s : f.listFiles()) {
+        File[] mydr = f.listFiles();
+        if (mydr == null)
+            return;
+        for (File s : mydr) {
             if (s.isFile()) {
                 listWithFileNames.add(s);
             } else if (s.isDirectory()) {
@@ -37,36 +40,45 @@ public class EditHelpRootAction implements RootAction {
         }
     }
 
-    //array for cash storage
+    //array for cache storage
     Map<String, String> map = new TreeMap<String, String>();
 
-    //reading files into cash
-    public EditHelpRootAction() throws IOException {
-        String dirName = Jenkins.getInstance().getRootDir().toString()+"/helpmanager";
+    //reading files into cache
+    public EditHelpRootAction() throws IOException, FileNotFoundException {
+        Jenkins jn = Jenkins.getInstance();
+        if (jn != null) {
+            File dirfile = jn.getRootDir();         
+            String dirName = null;         
+            if(dirfile != null) {
+                dirName = dirfile.toString()+"/helpmanager";
+            //check if the directory exists
+                File helpManagerFile = new File(dirName);
 
-        //check if the directory exists
-        File helpManagerFile = new File(dirName);
-        if(!helpManagerFile.exists())
-            helpManagerFile.mkdirs();
+                if(!helpManagerFile.exists())
+                    if (!helpManagerFile.mkdirs()) {
+                        System.out.print("unable create directory");
+                    }
 
-        //reading files from the directory
-        getListFiles(dirName);
+                //reading files from the directory
+                getListFiles(dirName);
 
-        //stream reading from files
-        for (File fil : listWithFileNames) {
-            StringBuilder sb = new StringBuilder();
-            BufferedReader br = new BufferedReader(new FileReader(dirName+"/"+fil.getName()));
-            try {
-                String s;
-                while ((s = br.readLine()) != null) {
-                    sb.append(s);
-                    sb.append("\n");
+                //stream reading from files
+                for (File fil : listWithFileNames) {
+                    StringBuilder sb = new StringBuilder();
+                    BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fil), "UTF8"));
+                    try {
+                        String s;
+                        while ((s = br.readLine()) != null) {
+                            sb.append(s);
+                            sb.append("\n");
+                        }
+                    } finally {
+                        br.close();
+                    }
+                    map.put(fil.getName(),sb.toString());
                 }
-            } finally {
-                br.close();
-            }
-            map.put(fil.getName(),sb.toString());
-        }
+            }            
+        }            
     }
 
     @Override
@@ -97,7 +109,7 @@ public class EditHelpRootAction implements RootAction {
     }
 
     //save text area into file and array
-    public String getUpdateMyString() throws IOException {
+    public String getUpdateMyString() throws IOException, FileNotFoundException {
         //process get request
         String class_name = Stapler.getCurrentRequest().getParameter("class");
         String updated_class_name = Stapler.getCurrentRequest().getParameter("textArea");
@@ -107,28 +119,37 @@ public class EditHelpRootAction implements RootAction {
 
         //writing into a file
         if (class_name != null) {
+            Jenkins jn = Jenkins.getInstance();
+            if (jn != null) {
+                File dirfile = jn.getRootDir();         
+                String dirName = null;         
+                if(dirfile != null) {
+                    dirName = dirfile.toString()+"/helpmanager";
+                    
+                    //check if the directory exists
+                    File helpManagerFile = new File(dirName);
+                    if(!helpManagerFile.exists())
+                        if (!helpManagerFile.mkdirs()) {
+                            System.out.print("unable create directory");
+                        }
 
-            String dirName = Jenkins.getInstance().getRootDir().toString()+"/helpmanager";
-            
-            //check if the directory exists
-            File helpManagerFile = new File(dirName);
-            if(!helpManagerFile.exists())
-                helpManagerFile.mkdirs();
+                    File newFile = new File(dirName + "/" + class_name + ".html");
+                    //check if the file exists
+                    if (!newFile.exists()) {
+                        if (!newFile.createNewFile()) {
+                            System.out.print("unable create directory");
+                        }
+                    }
 
-            File newFile = new File(dirName + "/" + class_name + ".html");
-            //check if the file exists
-            if (!newFile.exists()) {
-                newFile.createNewFile();
+                    //stream writing into file
+                    BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(newFile), "UTF-8"));
+                    out.write(updated_class_name);
+                    out.flush();
+                    out.close();
+
+                }
             }
-
-            //stream writing into file
-            FileWriter fw = new FileWriter(newFile);
-            BufferedWriter out = new BufferedWriter(fw);
-            out.write(updated_class_name);
-            out.flush();
-            out.close();
         }
-
         return null;
     }
 }
