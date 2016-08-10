@@ -1,11 +1,11 @@
-.custom-hep-button{
+.custom-help-button{
     float: right;
     position: relative;
     left: -46px;
     top: -4px;
 }
 
-.custom-hep-button-edit, .custom-hep-button-save{
+.custom-help-button-edit, .custom-help-button-save{
 position: absolute;
     float: right;
     background: #447788;
@@ -26,16 +26,16 @@ position: absolute;
     background: none;
 }
 
-.custom-hep-text textarea{
+.custom-help-text textarea{
       width: 100%;
     border: none;
     min-height: 200px;
 }
 
-.custom-hep-text {
+.custom-help-text {
     min-height: 23px;
 }
 
-.custom-hep-text textarea:focus{
+.custom-help-text textarea:focus{
      outline: none;
 }
