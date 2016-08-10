@@ -3,6 +3,7 @@ package org.jenkinsci.plugins.edithelp;
 import java.io.*;
 
 import hudson.Extension;
+import hudson.cli.PrivateKeyProvider;
 import hudson.model.Action;
 import hudson.model.RootAction;
 import hudson.model.View;
@@ -19,11 +20,16 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static java.util.logging.Level.FINE;
 
 
 @Extension
 public class EditHelpRootAction implements RootAction {
 
+    private static final Logger LOGGER = Logger.getLogger(PrivateKeyProvider.class.getName());
     //reading the catalog of helpmanager
     private static ArrayList<File> listWithFileNames = new ArrayList<>();
     public static void getListFiles(String str) {
@@ -56,7 +62,7 @@ public class EditHelpRootAction implements RootAction {
 
                 if(!helpManagerFile.exists())
                     if (!helpManagerFile.mkdirs()) {
-                        System.out.print("unable create directory");
+                        LOGGER.log(FINE,"unable create directory");
                     }
 
                 //reading files from the directory
@@ -100,20 +106,14 @@ public class EditHelpRootAction implements RootAction {
     public String getMyString() {
         //process get request
         String class_name = Stapler.getCurrentRequest().getParameter("class");
-
-        if(map.containsKey(class_name+".html")){
-            return map.get(class_name+".html");
-        }else{
-            return null;
-        }
+        return map.get(class_name+".html");
     }
 
     //save text area into file and array
-    public String getUpdateMyString() throws IOException, FileNotFoundException {
+    public String getUpdateMyString() {
         //process get request
         String class_name = Stapler.getCurrentRequest().getParameter("class");
         String updated_class_name = Stapler.getCurrentRequest().getParameter("textArea");
-
         //replacement or creation of the string
         map.put(class_name+".html",updated_class_name);
 
@@ -130,22 +130,29 @@ public class EditHelpRootAction implements RootAction {
                     File helpManagerFile = new File(dirName);
                     if(!helpManagerFile.exists())
                         if (!helpManagerFile.mkdirs()) {
-                            System.out.print("unable create directory");
+                            LOGGER.log(FINE,"unable create directory");
                         }
 
                     File newFile = new File(dirName + "/" + class_name + ".html");
                     //check if the file exists
                     if (!newFile.exists()) {
-                        if (!newFile.createNewFile()) {
-                            System.out.print("unable create directory");
+                        try{
+                            if (!newFile.createNewFile()) {
+                                LOGGER.log(FINE,"unable create directory");
+                            }
                         }
+                        catch (IOException exname){}
+
                     }
 
                     //stream writing into file
-                    BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(newFile), "UTF-8"));
-                    out.write(updated_class_name);
-                    out.flush();
-                    out.close();
+                    try{
+                        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(newFile), "UTF-8"));
+                        out.write(updated_class_name);
+                        out.flush();
+                        out.close();
+                    }
+                    catch (IOException exname){}
 
                 }
             }
