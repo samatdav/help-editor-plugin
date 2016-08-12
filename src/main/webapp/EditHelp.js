@@ -38,7 +38,7 @@ Behaviour.specify("A.help-button", 'hudson-behavior', 1, function(e) {
             }
 
             var customurl = rootURL + "/helpmanager/get?class="+customHelpUrl;
-                $(div2).setAttribute("customHelpUrl", rootURL+"/helpmanager/update");
+                $(div2).setAttribute("customHelpUrl", rootURL+"/helpmanager/updateMyString");
                 $(div2).setAttribute("className", customHelpUrl);
 
             new Ajax.Request(customurl, {
