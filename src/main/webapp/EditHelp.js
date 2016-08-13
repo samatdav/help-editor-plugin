@@ -1,9 +1,12 @@
+// Replacement of the function on help-button click event
 Behaviour.specify("A.help-button", 'hudson-behavior', 1, function(e) {
     e.onclick = function() {
         var tr = findFollowingTR(this, "help-area");            
         var thistr = $(this).up().up();
 
+        // Check if the custom help area is open
         if (!$(tr).hasClassName("custom-help")) {
+            // Created element tr for custom help
             var customtr = document.createElement("tr");
             customtr.innerHTML = '  <td></td><td colspan="2"><div class="help"><div class="custom-help-button">'+
             '<div class="custom-help-button-save" onclick="save_custom_help(this)" >Save</div><div class="custom-help-button-edit" onclick="edit_custom_help(this)" >Edit</div>'+
@@ -11,8 +14,11 @@ Behaviour.specify("A.help-button", 'hudson-behavior', 1, function(e) {
             $(customtr).addClassName("help-area");
             $(customtr).addClassName("custom-help");
             $(thistr).insert({after:customtr});
+            // Modification of the inner structure of the created element
             $(customtr).down().next().down().down().down().next().style.display = "block";
+            // Location for the default help
             var div = $(tr).down().next().down();
+            // Location for the custom help
             var div2 = $(customtr).down().next().down().down().next()
             var div3 = $(customtr).down().next().down();
             div.style.display = "block";
@@ -32,14 +38,15 @@ Behaviour.specify("A.help-button", 'hudson-behavior', 1, function(e) {
                 }
             });
             
-            var customHelpUrl = this.getAttribute("helpURL").replace(rootURL+"/", "").replace("/", ".");
-            while(customHelpUrl.indexOf("/") + 1){
-                customHelpUrl = customHelpUrl.replace("/", ".")
+            // Creation of unique id
+            var customHelpClassName = this.getAttribute("helpURL").replace(rootURL+"/", "").replace("/", ".");
+            while(customHelpClassName.indexOf("/") + 1){
+                customHelpClassName = customHelpClassName.replace("/", ".")
             }
 
-            var customurl = rootURL + "/helpmanager/get?class="+customHelpUrl;
-                $(div2).setAttribute("customHelpUrl", rootURL+"/helpmanager/updateMyString");
-                $(div2).setAttribute("className", customHelpUrl);
+            var customurl = rootURL + "/helpmanager/get?class="+customHelpClassName;
+                $(div2).setAttribute("customHelpUrl", rootURL+"/helpmanager/updateHelpInfo");
+                $(div2).setAttribute("className", customHelpClassName);
 
             new Ajax.Request(customurl, {
                 method : 'get',

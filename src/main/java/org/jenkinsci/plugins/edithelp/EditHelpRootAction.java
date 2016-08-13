@@ -12,6 +12,7 @@ import hudson.cli.PrivateKeyProvider;
 import hudson.model.RootAction;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
+import org.kohsuke.accmod.Restricted;
 import org.kohsuke.stapler.Stapler;
 
 import java.nio.charset.StandardCharsets;
@@ -92,22 +93,22 @@ public class EditHelpRootAction implements RootAction {
     }
 
     //copying from array
-    public String getMyString() {
+    public String getHelpInfo() {
         //process get request
-        String class_name = Stapler.getCurrentRequest().getParameter("class");
-        return arrayOfHelp.get(class_name+".html");
+        String className = Stapler.getCurrentRequest().getParameter("class");
+        return arrayOfHelp.get(className+".html");
     }
 
     //save text area into file and array
-    public void doUpdateMyString() {
+    public void doUpdateHelpInfo() {
         //process get request
-        String class_name = Stapler.getCurrentRequest().getParameter("class");
-        String updated_class_name = Stapler.getCurrentRequest().getParameter("textArea");
+        String className = Stapler.getCurrentRequest().getParameter("class");
+        String updatedClassText = Stapler.getCurrentRequest().getParameter("textArea");
         //replacement or creation of the string
-        arrayOfHelp.put(class_name+".html",updated_class_name);
+        arrayOfHelp.put(className+".html",updatedClassText);
 
         //writing into a file
-        if (class_name != null) {
+        if (className != null) {
             Jenkins jn = Jenkins.getInstance();
             if (jn != null) {
                 File dirfile = jn.getRootDir();         
@@ -120,7 +121,7 @@ public class EditHelpRootAction implements RootAction {
                             LOGGER.log(FINE,"unable create directory");
                         }
 
-                    File newFile = new File(helpManagerFile.getAbsolutePath() + "/" + class_name + ".html");
+                    File newFile = new File(helpManagerFile.getAbsolutePath() + "/" + className + ".html");
                     //check if the file exists
                     if (!newFile.exists()) {
                         try{
@@ -135,7 +136,7 @@ public class EditHelpRootAction implements RootAction {
                     //stream writing into file
                     try{
                         BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(newFile), StandardCharsets.UTF_8));
-                        out.write(updated_class_name);
+                        out.write(updatedClassText);
                         out.flush();
                         out.close();
                     }
