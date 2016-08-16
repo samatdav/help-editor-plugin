@@ -6,7 +6,7 @@
 }
 
 .custom-help-button-edit, .custom-help-button-save{
-position: absolute;
+    position: absolute;
     float: right;
     background: #447788;
     padding: 6px 11px 6px 11px;
@@ -27,7 +27,7 @@ position: absolute;
 }
 
 .custom-help-text textarea{
-      width: 100%;
+    width: 100%;
     border: none;
     min-height: 200px;
 }
