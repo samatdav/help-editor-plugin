@@ -27,22 +27,34 @@ TODO GIF
 ## Current status
 
 Currently the plugin is a work in progress. The plugin is fully functional, builds successfully, and passess all tests. 
+
 However, there are still several comments on code improvements.
-You can see the the work progress in the pull request to /jenkinsci/help-editor-plugin: https://github.com/jenkinsci/help-editor-plugin/pull/1
+
+You can see the the work progress in the pull request to /jenkinsci/help-editor-plugin:
+
+https://github.com/jenkinsci/help-editor-plugin/pull/1
 
 
 ## Plugin Structure
 
 On startup of a Jenkins instanse the plugin downloads all custom help information and stores them in chache.
+
 On click of a blue question mark icon the plugin checks if there is a custom help related to the clicked field.
+
 If the the custom help found it is presented to user. Otherwise, a user sees a blank field.
+
 When a user clicks 'Save' button, the new files is created with the information entered in the text box.
-The plugin stores files in 'helpmanager' dirictory, located in plugin's home.
-The files can be modified directly in file management system. However, for changes to appear, the Jenkins instance must be refreshed.
+
+The plugin stores files in 'helpmanager' directory, located in JENKINS_HOME.
+
+The files can be modified directly in file management system. However, for changes to appear, the Jenkins instance must be restarted.
 
 On the image below you can see the main structure of the plugin.
-After a click of a blue question mark icon, or an edit button the plugin sends AJAX requests just as hudson-behaviour does in Jenkins core.
+After a click of a blue question mark icon, or an 'save' button the plugin sends AJAX requests just as hudson-behaviour does in Jenkins core.
+
 AJAX request then connect to plugin's root action with correspoding functions.
-Then the root action accesses the help file by ID and either returns it to JavaScript and then to user, or updates it.
+
+Finally, then the root action accesses the help file by ID and either returns it to JavaScript and then to user, or updates it.
+
 ![Help manager plugin structure](https://www.gliffy.com/go/publish/image/10922741/L.png)
 
