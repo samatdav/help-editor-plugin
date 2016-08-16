@@ -21,6 +21,7 @@ After downloading help editor plugin you will need to make only few easy steps t
 Then you will be able to see your custom information, each time you open your help.
 
 You can see this process illustrated on the GIF below:
+
 TODO GIF
 
 
@@ -50,6 +51,7 @@ The plugin stores files in 'helpmanager' directory, located in JENKINS_HOME.
 The files can be modified directly in file management system. However, for changes to appear, the Jenkins instance must be restarted.
 
 On the image below you can see the main structure of the plugin.
+
 After a click of a blue question mark icon, or an 'save' button the plugin sends AJAX requests just as hudson-behaviour does in Jenkins core.
 
 AJAX request then connect to plugin's root action with correspoding functions.
