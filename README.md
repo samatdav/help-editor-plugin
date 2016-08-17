@@ -7,7 +7,6 @@ Help editor plugin allows you to add additional custom help above default help o
 2. [Current status](#current-status)
 3. [Plugin Structure](#plugin-structure)
 
-
 ## Quick Start
 
 After downloading help editor plugin you will need to make only few easy steps to create your custom help information:
@@ -22,8 +21,7 @@ Then you will be able to see your custom information, each time you open your he
 
 You can see this process illustrated on the GIF below:
 
-TODO GIF
-
+![Demonstrating GIF](https://files.gitter.im/samatdav/DS4T/PluginDemo.gif)
 
 ## Current status
 
