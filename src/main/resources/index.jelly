@@ -1,0 +1,4 @@
+<?jelly escape-by-default='true'?>
+<div>
+  Help editor plugin allows you to add additional custom help above default help on job configuration pages.
+</div>
