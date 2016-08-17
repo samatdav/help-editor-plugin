@@ -21,7 +21,7 @@ Then you will be able to see your custom information, each time you open your he
 
 You can see this process illustrated on the GIF below:
 
-![Demonstrating GIF](https://files.gitter.im/samatdav/DS4T/PluginDemo.gif)
+![Demonstrating GIF](https://files.gitter.im/samatdav/qmMA/Demo.gif)
 
 ## Current status
 
