@@ -111,6 +111,8 @@ public class EditHelpRootAction implements RootAction {
 
     //save text area into file and array
     public void doUpdateHelpInfo(@QueryParameter("class") String className, @QueryParameter("textArea") String updatedClassText) {
+
+        Jenkins.getActiveInstance().checkPermission(Jenkins.ADMINISTER);
         
         //process get request
         if (className != null) {
