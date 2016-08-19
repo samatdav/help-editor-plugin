@@ -15,7 +15,8 @@ Behaviour.specify("A.help-button", 'hudson-behavior', 1, function(e) {
             $(customtr).addClassName("custom-help");
             $(thistr).insert({after:customtr});
             // Modification of the inner structure of the created element
-            $(customtr).down().next().down().down().down().next().style.display = "block";
+            if(isAdminHelp)
+                $(customtr).down().next().down().down().down().next().style.display = "block";
             // Location for the default help
             var div = $(tr).down().next().down();
             // Location for the custom help
