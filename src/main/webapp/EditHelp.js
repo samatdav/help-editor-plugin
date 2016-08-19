@@ -45,7 +45,7 @@ Behaviour.specify("A.help-button", 'hudson-behavior', 1, function(e) {
                 customHelpClassName = customHelpClassName.replace("/", ".")
             }
 
-            var customurl = rootURL + "/helpmanager/get?class="+customHelpClassName;
+            var customurl = rootURL + "/helpmanager/helpInfo?class="+customHelpClassName;
                 $(div2).setAttribute("customHelpUrl", rootURL+"/helpmanager/updateHelpInfo");
                 $(div2).setAttribute("className", customHelpClassName);
 
