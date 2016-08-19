@@ -11,16 +11,19 @@ import hudson.cli.PrivateKeyProvider;
 import hudson.model.RootAction;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
+import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.Stapler;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import hudson.util.HttpResponses;
 
 import static java.nio.file.Files.readAllLines;
-import static java.util.logging.Level.FINE;
+import static java.util.logging.Level.WARNING;
+
+
 
 @Extension
 public class EditHelpRootAction implements RootAction {
@@ -40,7 +43,7 @@ public class EditHelpRootAction implements RootAction {
 
             if(!helpManagerFile.exists())
                 if (!helpManagerFile.mkdirs()) {
-                    LOGGER.log(FINE,"Unable create directory: "+helpManagerFile.getAbsolutePath());
+                    LOGGER.log(WARNING,"Unable create directory: "+helpManagerFile.getAbsolutePath());
                 }
 
             //reading files from the directory
@@ -48,9 +51,11 @@ public class EditHelpRootAction implements RootAction {
                 File dir = new File(helpManagerFile.getAbsolutePath());
                 File[] files = dir.listFiles();
                 if (files != null)
-                    for (File file : files)
-                        if (file.isFile())
+                    for (File file : files){
+                        if (file.isFile()){
                             hashMapOfHelp.put(file.getName(),readFromFile(file));
+                        }
+                    }
             }
         }
 
@@ -72,23 +77,24 @@ public class EditHelpRootAction implements RootAction {
     }
 
     //copying from HashMap
-    public String getHelpInfo() {
-        //process get request
-        String className = Stapler.getCurrentRequest().getParameter("class");
+    public HttpResponse doHelpInfo(@QueryParameter("class") String className) {
+
         String Help = hashMapOfHelp.get(className+".html");
+        
         if(Help != null)
-            return Help;
+            return HttpResponses.html(Help);
         else
-            return "";
+            return HttpResponses.html("");
+
+        
     }
 
     private void writeInFile(File file, String info){
         try(BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))){
             out.write(info);
             out.flush();
-            out.close();
         } catch (IOException exname){
-            LOGGER.log(FINE,"file was not written:"+file.getAbsolutePath());
+            LOGGER.log(WARNING,"file was not written:"+file.getAbsolutePath());
         }
     }
 
@@ -98,14 +104,14 @@ public class EditHelpRootAction implements RootAction {
             return StringUtils.join(getStringList, "\n");
 
         } catch (IOException exname){
-            LOGGER.log(FINE,"help file was not read:"+file.getAbsolutePath());
+            LOGGER.log(WARNING,"help file was not read:"+file.getAbsolutePath());
             return "";
         }
     }
 
     //save text area into file and array
     public void doUpdateHelpInfo(@QueryParameter("class") String className, @QueryParameter("textArea") String updatedClassText) {
-        Jenkins.getActiveInstance().checkPermission(Jenkins.ADMINISTER);
+        
         //process get request
         if (className != null) {
             //replacement or creation of the string
@@ -119,22 +125,21 @@ public class EditHelpRootAction implements RootAction {
                 File helpManagerFile = new File(dirfile, "helpmanager");
                 if(!helpManagerFile.exists())
                     if (!helpManagerFile.mkdirs())
-                        LOGGER.log(FINE,"unable create helpmanager directory");
+                        LOGGER.log(WARNING,"unable create helpmanager directory");
 
                 File newFile = new File(helpManagerFile.getAbsolutePath() + "/" + className + ".html");
                 //check if the file exists
                 if (!newFile.exists()) {
                     try{
                         if (!newFile.createNewFile())
-                            LOGGER.log(FINE,"help file was not created:"+newFile.getAbsolutePath());
+                            LOGGER.log(WARNING,"help file was not created:"+newFile.getAbsolutePath());
                     } catch (IOException exname){
-                        LOGGER.log(FINE,"help file was not created:"+newFile.getAbsolutePath());
+                        LOGGER.log(WARNING,"help file was not created:"+newFile.getAbsolutePath());
                     }
                 }
 
                 writeInFile(newFile, updatedClassText);
             }
-
         } 
     }
 }
