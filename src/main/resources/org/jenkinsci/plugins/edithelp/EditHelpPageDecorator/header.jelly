@@ -4,6 +4,6 @@
   <j:if test="${h.hasPermission(app.ADMINISTER)}">
     <script>isAdminHelp = true;</script>
   </j:if>
-  <link type="text/css" rel="stylesheet" href="${rootURL}/plugin/help-editor/EditHelp.css" />
-  <script src="${rootURL}/plugin/help-editor/EditHelp.js"/>
+  <link type="text/css" rel="stylesheet" href="${rootURL}/plugin/edit-help/EditHelp.css" />
+  <script src="${rootURL}/plugin/edit-help/EditHelp.js"/>
 </j:jelly>
