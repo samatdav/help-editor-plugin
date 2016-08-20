@@ -85,6 +85,8 @@ public class EditHelpRootAction implements RootAction {
     @Restricted(NoExternalUse.class)
     public HttpResponse doHelpInfo(@QueryParameter("class") String className) {
 
+        Jenkins.getActiveInstance().checkPermission(Jenkins.READ);
+
         String Help = hashMapOfHelp.get(className+".html");
         
         if (Help != null) {
